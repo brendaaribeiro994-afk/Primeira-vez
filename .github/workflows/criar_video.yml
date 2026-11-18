@@ -1,7 +1,7 @@
 name: Gerar Video Streamer GTA 6
 
 on:
-  workflow_dispatch: # Permite você clicar num botão para gerar o vídeo quando quiser
+  workflow_dispatch:
 
 jobs:
   build:
@@ -10,21 +10,29 @@ jobs:
       - name: Baixar arquivos do repositório
         uses: actions/checkout@v4
 
+      - name: Instalar dependências do sistema (ImageMagick)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg imagemagick
+
       - name: Configurar Python
-        uses: actions/setup-python@v5
+        uses: setup-python@v5
         with:
           python-version: '3.10'
 
-      - name: Instalar bibliotecas de voz e vídeo
+      - name: Instalar bibliotecas Python
         run: |
+          pip install --upgrade pip
           pip install edge-tts moviepy==1.0.3
 
-      - name: Rodar o script e gerar o vídeo
+      - name: Rodar o script e gerar o vídeo e o áudio
         run: |
           python gerar_video.py
 
-      - name: Salvar vídeo gerado para download
+      - name: Salvar vídeo e áudio gerados para download
         uses: actions/upload-artifact@v4
         with:
-          name: video-gta6-pronto
-          path: video_gta6.mp4
+          name: arquivos-gta6-separados
+          path: |
+            video_gta6.mp4
+            voz_streamer.mp3
